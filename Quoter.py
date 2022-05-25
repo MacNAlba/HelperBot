@@ -10,7 +10,7 @@ def Brooklyn():
         'I asked them if they wanted to embarrass you, and they instantly said yes',
         'Sarge, with all due respect, I am gonna completely ignore everything you just said',
         'I ate one string bean. It tasted like fish vomit. That was it for me',
-        'The English language cannot fully capture the depth and complexity of my thoughts, so I’m incorporating emojis into my speech to better express myself. Winky face',
+        'The English language cannot fully capture the depth and complexity of my thoughts, so I’m incorporating emojis into my speech to better express myself. :wink:',
         'Move over, Peralta! Move over! Okay. And if I may do a third toast, it’ll be focused primarily on the mango yogurt',
         'Fine, but in protest, I’m walking over there extremely slowly!',
         'Actually, someone reported that they couldn’t find your head. But we found it; it was up your butt. You’re a fireman; you should know how to treat that burn',

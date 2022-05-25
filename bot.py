@@ -7,15 +7,16 @@ import discord
 from dotenv import load_dotenv
 import json
 
-bot = commands.Bot(command_prefix="!")
 
-load_dotenv()
+
+load_dotenv() # Load secrets from .env file to be applied to local variables
 token = os.getenv('DISCORD_TOKEN')
 youtube = os.getenv('YOUTUBE_API')
 guild = os.getenv('DISCORD_GUILD')
 steamAPI = os.getenv('STEAM_API')
 weatherAPI = os.getenv('WEATHER_API')
 weatherURL = os.getenv('WEATHER_URL')
+bot = commands.Bot(command_prefix="!") # Set bot command prefix symbol to be !
 
 
 @bot.event  # Bot connected
@@ -23,7 +24,7 @@ async def on_ready():
     print(f'{bot.user.name} has connected to the server!')
 
 
-@bot.event  # Message Listener
+@bot.event  # Message listener that reads messages for key word prompts
 async def on_message(message):
     if message.author == bot.user:
         return
@@ -54,7 +55,7 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-@bot.command()
+@bot.command() # Bot command listener for Weather feature
 async def weather(ctx, *, city: str):
     city_name = city
     complete_url = weatherURL + city_name + "&appid=" + weatherAPI
@@ -85,13 +86,13 @@ async def weather(ctx, *, city: str):
         await channel.send("City not found.")
 
 
-@bot.command()
+@bot.command() # A test command listener to test functionality
 async def test(ctx):
     response = "Successful test"
     await ctx.send(response)
 
 
-@bot.event  # Error handler
+@bot.event  # Error handler that dumps to error.log file
 async def on_error(event, *args, **kwargs):
     with open('errors.log', 'a') as f:
         if event == 'on_message':
@@ -100,4 +101,4 @@ async def on_error(event, *args, **kwargs):
             raise
 
 
-bot.run(token)
+bot.run(token) # Initialise the bot with the Discord API token
