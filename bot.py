@@ -14,7 +14,6 @@ token = os.getenv('DISCORD_TOKEN')
 youtube = os.getenv('YOUTUBE_API')
 guild = os.getenv('DISCORD_GUILD')
 steamAPI = os.getenv('STEAM_API')
-# bot = discord.Client()
 weatherAPI = os.getenv('WEATHER_API')
 weatherURL = os.getenv('WEATHER_URL')
 
