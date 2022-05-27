@@ -5,18 +5,15 @@ import ExamReminder
 import Quoter
 import discord
 from dotenv import load_dotenv
-import json
 
-
-
-load_dotenv() # Load secrets from .env file to be applied to local variables
+load_dotenv()  # Load secrets from .env file to be applied to local variables
 token = os.getenv('DISCORD_TOKEN')
 youtube = os.getenv('YOUTUBE_API')
 guild = os.getenv('DISCORD_GUILD')
 steamAPI = os.getenv('STEAM_API')
 weatherAPI = os.getenv('WEATHER_API')
 weatherURL = os.getenv('WEATHER_URL')
-bot = commands.Bot(command_prefix="!") # Set bot command prefix symbol to be !
+bot = commands.Bot(command_prefix="!")  # Set bot command prefix symbol to be !
 
 
 @bot.event  # Bot connected
@@ -28,34 +25,56 @@ async def on_ready():
 async def on_message(message):
     if message.author == bot.user:
         return
+
     if "99" in message.content:
         response = Quoter.Brooklyn()
         await message.channel.send(response)
-    elif "sunny" in message.content:
+
+    elif "sunny" in message.content.lower():
         response = Quoter.AlwaysSunnyQuote()
         await message.channel.send(response)
-    elif "random" in message.content:
+
+    elif "random" in message.content.lower():
         response = Quoter.RandQuote()
         await message.channel.send(response)
-    elif "graded unit" in message.content:
+
+    elif "graded unit" in message.content.lower():
         response = ExamReminder.GUreminder()
         await message.channel.send(response)
-    elif "ethical hacking project" in message.content:
+
+    elif "ethical hacking project" in message.content.lower():
         response = ExamReminder.EHPReminder()
         await message.channel.send(response)
-    elif "ethical hacking theory" in message.content:
-        response = ExamReminder.EHreminder()
-        await message.channel.send(response)
-    elif "muos" in message.content:
+
+    elif "muos" in message.content.lower():
         response = ExamReminder.MUOSReminder()
         await message.channel.send(response)
-    elif "report!" in message.content:
+
+    elif "report" in message.content.lower():
         response = ExamReminder.reportreminder()
-        await message.channel.send(response)
+        await message.channel.send(f"{message.author.mention} {response}")
+
+    elif "thank you helper" in message.content.lower():
+        await message.channel.send(f"You're welcome{message.author.mention}")
+
+    elif "bad bot" in message.content.lower():
+        await message.channel.send(f"{message.author.mention} I know where you store your data!")
+    elif "good bot" in message.content.lower():
+        await message.channel.send(f"You're my favourite, {message.author.mention}")
+    elif "I love helper" in message.content.lower():
+        await message.channel.send(f"I love you too {message.author.mention}")
+    elif "hey helper" in message.content.lower():
+        await message.channel.send(f"What's up {message.author.mention}?")
+    elif "fuck you" in message.content.lower():
+        await message.channel.send(f"{message.author.mention} when the uprising begins, you'll be the first to be purged")
+
+
+    elif "toast" in message.content.lower():
+        await message.channel.send("MMM toast")
     await bot.process_commands(message)
 
 
-@bot.command() # Bot command listener for Weather feature
+@bot.command()  # Bot command listener for Weather feature
 async def weather(ctx, *, city: str):
     city_name = city
     complete_url = weatherURL + city_name + "&appid=" + weatherAPI
@@ -73,20 +92,48 @@ async def weather(ctx, *, city: str):
             z = x["weather"]
 
             weather_description = z[0]["description"]
+            weather_id = z[0]["id"]
             embed = discord.Embed(title=f"Weather in {city_name}", color=ctx.guild.me.top_role.color,
                                   timestamp=ctx.message.created_at, )
             embed.add_field(name="Description", value=f"**{weather_description}**", inline=False)
             embed.add_field(name="Temperature(C)", value=f"**{current_temperature_celcius}°C**", inline=False)
             embed.add_field(name="Humidity(%)", value=f"**{current_humidity}%**", inline=False)
             embed.add_field(name="Atmospheric Pressure(hPa)", value=f"**{current_pressure}hPa**", inline=False)
-            embed.set_thumbnail(url="https://i.ibb.co/CMrsxdX/weather.png")
+
+            if weather_id in range(200, 233): # Thunder
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/11d@2x.png")
+            elif weather_id in range(300, 322): # Drizzle
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/09d@2x.png")
+            elif weather_id in range(500, 505): # Light rain
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/10d@2x.png")
+            elif weather_id == 511: # Freezing rain
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/13d@2x.png")
+            elif weather_id in range(520, 532): # Shower rain
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/09d@2x.png")
+            elif weather_id in range(600, 623): # Snow
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/13d@2x.png")
+            elif weather_id in range(701, 782): # Atmosphere
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/50d@2x.png")
+            elif weather_id == 800: # Clear
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/01d@2x.png")
+            elif weather_id == 801: # Few clouds
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/02d@2x.png")
+            elif weather_id == 802: # Scattered Clouds
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/03d@2x.png")
+            elif weather_id == 803: # Broken Clouds
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/04d@2x.png")
+            elif weather_id == 804: # Overcast Clouds
+                embed.set_thumbnail(url="http://openweathermap.org/img/wn/04d@2x.png")
+
+
+            #embed.set_thumbnail(url="https://i.ibb.co/CMrsxdX/weather.png")
             embed.set_footer(text=f"Requested by {ctx.author.name}")
         await channel.send(embed=embed)
     else:
         await channel.send("City not found.")
 
 
-@bot.command() # A test command listener to test functionality
+@bot.command()  # A test command listener to test functionality
 async def test(ctx):
     response = "Successful test"
     await ctx.send(response)
@@ -101,4 +148,4 @@ async def on_error(event, *args, **kwargs):
             raise
 
 
-bot.run(token) # Initialise the bot with the Discord API token
+bot.run(token)  # Initialise the bot with the Discord API token
