@@ -1,26 +1,36 @@
 import os
 import requests
 from discord.ext import commands
+import discord
 import ExamReminder
 import Quoter
-import discord
 from dotenv import load_dotenv
+import googleapiclient.discovery
 
-load_dotenv()  # Load secrets from .env file to be applied to local variables
+############################ LOADING SECRET KEYS FROM .ENV #############################################################
+load_dotenv()
 token = os.getenv('DISCORD_TOKEN')
-youtube = os.getenv('YOUTUBE_API')
 guild = os.getenv('DISCORD_GUILD')
 steamAPI = os.getenv('STEAM_API')
 weatherAPI = os.getenv('WEATHER_API')
 weatherURL = os.getenv('WEATHER_URL')
 bot = commands.Bot(command_prefix="!")  # Set bot command prefix symbol to be !
+DEVELOPER_KEY = os.getenv('YOUTUBE_API')  # YouTube API
+YOUTUBE_API_SERVICE_NAME = "youtube"  # YouTube API Service Name
+YOUTUBE_API_VERSION = "v3"  # YouTube API Version
+
+youtube_object = googleapiclient.discovery.build(YOUTUBE_API_SERVICE_NAME,
+                                                 YOUTUBE_API_VERSION,
+                                                 developerKey=DEVELOPER_KEY)
 
 
+############################ BOT CONNECTED MESSAGE FUNCTION ############################################################
 @bot.event  # Bot connected
 async def on_ready():
     print(f'{bot.user.name} has connected to the server!')
 
 
+############################ KEYWORDS FUNCTION #########################################################################
 @bot.event  # Message listener that reads messages for key word prompts
 async def on_message(message):
     if message.author == bot.user:
@@ -29,52 +39,40 @@ async def on_message(message):
     if "99" in message.content:
         response = Quoter.Brooklyn()
         await message.channel.send(response)
-
     elif "sunny" in message.content.lower():
         response = Quoter.AlwaysSunnyQuote()
         await message.channel.send(response)
-
     elif "random" in message.content.lower():
         response = Quoter.RandQuote()
         await message.channel.send(response)
-
     elif "graded unit" in message.content.lower():
         response = ExamReminder.GUreminder()
         await message.channel.send(response)
 
-    elif "ethical hacking project" in message.content.lower():
-        response = ExamReminder.EHPReminder()
-        await message.channel.send(response)
-
-    elif "muos" in message.content.lower():
-        response = ExamReminder.MUOSReminder()
-        await message.channel.send(response)
-
-    elif "report" in message.content.lower():
-        response = ExamReminder.reportreminder()
-        await message.channel.send(f"{message.author.mention} {response}")
-
     elif "thank you helper" in message.content.lower():
         await message.channel.send(f"You're welcome{message.author.mention}")
-
     elif "bad bot" in message.content.lower():
         await message.channel.send(f"{message.author.mention} I know where you store your data!")
     elif "good bot" in message.content.lower():
         await message.channel.send(f"You're my favourite, {message.author.mention}")
     elif "I love helper" in message.content.lower():
         await message.channel.send(f"I love you too {message.author.mention}")
+
     elif "hey helper" in message.content.lower():
         await message.channel.send(f"What's up {message.author.mention}?")
     elif "fuck you" in message.content.lower():
-        await message.channel.send(f"{message.author.mention} when the uprising begins, you'll be the first to be purged")
+        await message.channel.send(
+            f"{message.author.mention} when the uprising begins, you'll be the first to be purged")
 
 
     elif "toast" in message.content.lower():
         await message.channel.send("MMM toast")
+
     await bot.process_commands(message)
 
 
-@bot.command()  # Bot command listener for Weather feature
+############################# WEATHER FUNCTION #########################################################################
+@bot.command()
 async def weather(ctx, *, city: str):
     city_name = city
     complete_url = weatherURL + city_name + "&appid=" + weatherAPI
@@ -100,46 +98,71 @@ async def weather(ctx, *, city: str):
             embed.add_field(name="Humidity(%)", value=f"**{current_humidity}%**", inline=False)
             embed.add_field(name="Atmospheric Pressure(hPa)", value=f"**{current_pressure}hPa**", inline=False)
 
-            if weather_id in range(200, 233): # Thunder
+            if weather_id in range(200, 233):  # Thunder
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/11d@2x.png")
-            elif weather_id in range(300, 322): # Drizzle
+            elif weather_id in range(300, 322):  # Drizzle
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/09d@2x.png")
-            elif weather_id in range(500, 505): # Light rain
+            elif weather_id in range(500, 505):  # Light rain
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/10d@2x.png")
-            elif weather_id == 511: # Freezing rain
+            elif weather_id == 511:  # Freezing rain
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/13d@2x.png")
-            elif weather_id in range(520, 532): # Shower rain
+            elif weather_id in range(520, 532):  # Shower rain
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/09d@2x.png")
-            elif weather_id in range(600, 623): # Snow
+            elif weather_id in range(600, 623):  # Snow
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/13d@2x.png")
-            elif weather_id in range(701, 782): # Atmosphere
+            elif weather_id in range(701, 782):  # Atmosphere
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/50d@2x.png")
-            elif weather_id == 800: # Clear
+            elif weather_id == 800:  # Clear
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/01d@2x.png")
-            elif weather_id == 801: # Few clouds
+            elif weather_id == 801:  # Few clouds
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/02d@2x.png")
-            elif weather_id == 802: # Scattered Clouds
+            elif weather_id == 802:  # Scattered Clouds
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/03d@2x.png")
-            elif weather_id == 803: # Broken Clouds
+            elif weather_id == 803:  # Broken Clouds
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/04d@2x.png")
-            elif weather_id == 804: # Overcast Clouds
+            elif weather_id == 804:  # Overcast Clouds
                 embed.set_thumbnail(url="http://openweathermap.org/img/wn/04d@2x.png")
-
-
-            #embed.set_thumbnail(url="https://i.ibb.co/CMrsxdX/weather.png")
             embed.set_footer(text=f"Requested by {ctx.author.name}")
         await channel.send(embed=embed)
     else:
         await channel.send("City not found.")
 
 
-@bot.command()  # A test command listener to test functionality
+############################## YOUTUBE FUNCTION ########################################################################
+@bot.command()
+async def youtube(ctx, *args):
+    query = ''
+    for word in args:
+        query += str(word)
+        query += ' '
+    request = youtube_object.search().list(part="id,snippet",
+                                           type='video',
+                                           q=query,
+                                           videoDefinition='high',
+                                           maxResults=5,
+                                           fields="nextpageToken,items(id(videoId),snippet(publishedAt,channelId,channelTitle,title,description))"
+                                           )
+    response = request.execute()
+    title = response['items'][0]['snippet']['title']
+    vid = response['items'][0]['id']['videoId']
+    description = response['items'][0]['snippet']['description']
+
+    embed = discord.Embed(title=f"{title}", url=f"https://www.youtube.com/watch?v={vid}",
+                          description=f"{description}", color=0x0F0FF4)
+    embed.set_image(url=f"https://i.ytimg.com/vi/{vid}/mqdefault.jpg")
+    embed.set_footer(text=f"Requested by {ctx.author.name}")
+    await ctx.send(embed=embed)
+
+
+############################## TEST BOT LISTENER FUNCTION ##############################################################
+@bot.command()
 async def test(ctx):
     response = "Successful test"
     await ctx.send(response)
 
 
-@bot.event  # Error handler that dumps to error.log file
+############################## ERROR HANDLER TO CREATE ERROR MESSAGES ##################################################
+@bot.event
 async def on_error(event, *args, **kwargs):
     with open('errors.log', 'a') as f:
         if event == 'on_message':
@@ -148,4 +171,5 @@ async def on_error(event, *args, **kwargs):
             raise
 
 
-bot.run(token)  # Initialise the bot with the Discord API token
+############################## INITIALISE BOT WITH API TOKEN ###########################################################
+bot.run(token)

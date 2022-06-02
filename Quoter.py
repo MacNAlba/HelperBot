@@ -1,4 +1,6 @@
 import random
+
+
 # Random quoter
 def Brooklyn():
     brooklyn_99_quotes = [
@@ -36,8 +38,10 @@ def Brooklyn():
 
     return random.choice(brooklyn_99_quotes)
 
+
 def AlwaysSunnyQuote():
-    SunnyQuotes = ["So you think not eating cat food is putting on airs?"," We’re trying to give you the Christmas spirit, dickhole!",
+    SunnyQuotes = ["So you think not eating cat food is putting on airs?",
+                   " We’re trying to give you the Christmas spirit, dickhole!",
                    "Yippie-kay-yay, Mr. Falcon!",
                    "Charlie, make a move. Just tell her you wanna bang her.",
                    "Mac, you have an exceptional number of bugs in your teeth. You’re gonna wanna rinse those out. It’s disgusting.",
@@ -113,7 +117,7 @@ def AlwaysSunnyQuote():
                    "THIS ISN\’T OVER UNTIL I SAY IT\’S OVER!",
                    "If you\’re in my room, you\’re always being filmed.",
                    "See, I’ve always got an A, B and C strike plan to get us out of any potentially life-threatening situation.",
-                    "\‘Cause if the girl said \“no,\” then the answer obviously is \“no.\” But the thing is, is she\’s not gonna say \“no.\” She would never say \“no,\” because of the implication.",
+                   "\‘Cause if the girl said \“no,\” then the answer obviously is \“no.\” But the thing is, is she\’s not gonna say \“no.\” She would never say \“no,\” because of the implication.",
                    "Oh, you\’re definitely gonna end up doing gay porn with this tiny little body of yours.",
                    "I got my Magnum condoms; I got my wad of hundreds. I\’m ready to plow.",
                    "Can I stop you, though? You keep using this word \“jabroni.\” And…it\’s awesome!",
@@ -141,3 +145,8 @@ def AlwaysSunnyQuote():
 
 def RandQuote():
     return 'I\'m sO rAnDoM :rofl: :stuck_out_tongue_closed_eyes: :zany_face:'
+
+
+def HelperReply():
+    reminder = []
+    return random.choice(reminder)
