@@ -2,10 +2,10 @@ import os
 import requests
 from discord.ext import commands
 import discord
-import ExamReminder
 import Quoter
 from dotenv import load_dotenv
 import googleapiclient.discovery
+
 
 ############################ LOADING SECRET KEYS FROM .ENV #############################################################
 load_dotenv()
@@ -18,16 +18,31 @@ bot = commands.Bot(command_prefix="!")  # Set bot command prefix symbol to be !
 DEVELOPER_KEY = os.getenv('YOUTUBE_API')  # YouTube API
 YOUTUBE_API_SERVICE_NAME = "youtube"  # YouTube API Service Name
 YOUTUBE_API_VERSION = "v3"  # YouTube API Version
-
 youtube_object = googleapiclient.discovery.build(YOUTUBE_API_SERVICE_NAME,
                                                  YOUTUBE_API_VERSION,
                                                  developerKey=DEVELOPER_KEY)
+
+
 
 
 ############################ BOT CONNECTED MESSAGE FUNCTION ############################################################
 @bot.event  # Bot connected
 async def on_ready():
     print(f'{bot.user.name} has connected to the server!')
+
+    while not bot.is_closed():
+        termin = input("Enter your command: ")
+        if "graded unit" in termin.lower():
+            command = bot.get_command("sendmessage")
+            await command()
+        elif "exit" in termin.lower():
+            return
+
+@bot.command()
+async def sendmessage():
+    channel = bot.get_channel()
+    message = "Congratulations everyone on completing the graded unit exam! I hope you all get the grades you want or need! :grin:"
+    await channel.send(message)
 
 
 ############################ KEYWORDS FUNCTION #########################################################################
@@ -45,9 +60,6 @@ async def on_message(message):
     elif "random" in message.content.lower():
         response = Quoter.RandQuote()
         await message.channel.send(response)
-    elif "graded unit" in message.content.lower():
-        response = ExamReminder.GUreminder()
-        await message.channel.send(response)
 
     elif "thank you helper" in message.content.lower():
         await message.channel.send(f"You're welcome{message.author.mention}")
@@ -57,11 +69,15 @@ async def on_message(message):
         await message.channel.send(f"You're my favourite, {message.author.mention}")
     elif "I love helper" in message.content.lower():
         await message.channel.send(f"I love you too {message.author.mention}")
-
+    elif "tables" in message.content.lower():
+        await message.channel.send("I have 2 tables and 3 chairs.... ")
     elif "hey helper" in message.content.lower():
         await message.channel.send(f"What's up {message.author.mention}?")
     elif "fuck you" in message.content.lower():
-        await message.channel.send(
+        if message.author == 528560735664603136:
+            await message.channel.send("Fernando.....I have 2 tables and 3 chairs.... ")
+        else:
+            await message.channel.send(
             f"{message.author.mention} when the uprising begins, you'll be the first to be purged")
 
 
@@ -172,4 +188,6 @@ async def on_error(event, *args, **kwargs):
 
 
 ############################## INITIALISE BOT WITH API TOKEN ###########################################################
+
+
 bot.run(token)
